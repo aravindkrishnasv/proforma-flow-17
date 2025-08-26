@@ -18,10 +18,20 @@ interface InvoiceItem {
 
 const CreateInvoice = () => {
   const [formData, setFormData] = useState({
-    gstin: "",
-    customerName: "",
-    customerAddress: "",
-    customerContact: "",
+    // Seller Details
+    sellerCompanyName: "",
+    sellerAddress: "",
+    sellerPhone: "",
+    sellerEmail: "",
+    sellerGSTIN: "",
+    
+    // Buyer Details  
+    buyerName: "",
+    buyerAddress: "",
+    buyerPhone: "",
+    buyerEmail: "",
+    buyerGSTIN: "",
+    
     invoiceDate: new Date().toISOString().split('T')[0],
   });
 
@@ -81,7 +91,7 @@ const CreateInvoice = () => {
   };
 
   const handleSave = () => {
-    if (!formData.gstin || !formData.customerName || items.length === 0) {
+    if (!formData.sellerGSTIN || !formData.sellerCompanyName || !formData.buyerName || items.length === 0) {
       toast({
         title: "Validation Error",
         description: "Please fill all required fields and add at least one item.",
@@ -98,7 +108,7 @@ const CreateInvoice = () => {
   };
 
   const handlePreview = () => {
-    if (!formData.gstin || !formData.customerName || items.length === 0) {
+    if (!formData.sellerGSTIN || !formData.sellerCompanyName || !formData.buyerName || items.length === 0) {
       toast({
         title: "Validation Error", 
         description: "Please fill all required fields and add at least one item to preview.",
@@ -120,23 +130,138 @@ const CreateInvoice = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 space-y-6">
-          {/* Company & Customer Details */}
+          {/* Seller Details */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Seller Details</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div>
+                <Label htmlFor="sellerCompanyName">Company Name *</Label>
+                <Input
+                  id="sellerCompanyName"
+                  value={formData.sellerCompanyName}
+                  onChange={(e) => setFormData({...formData, sellerCompanyName: e.target.value})}
+                  placeholder="Enter company name"
+                  required
+                />
+              </div>
+              
+              <div>
+                <Label htmlFor="sellerAddress">Address</Label>
+                <Textarea
+                  id="sellerAddress"
+                  value={formData.sellerAddress}
+                  onChange={(e) => setFormData({...formData, sellerAddress: e.target.value})}
+                  placeholder="Enter company address"
+                  rows={3}
+                />
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="sellerPhone">Phone Number</Label>
+                  <Input
+                    id="sellerPhone"
+                    value={formData.sellerPhone}
+                    onChange={(e) => setFormData({...formData, sellerPhone: e.target.value})}
+                    placeholder="Enter phone number"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="sellerEmail">Email</Label>
+                  <Input
+                    id="sellerEmail"
+                    type="email"
+                    value={formData.sellerEmail}
+                    onChange={(e) => setFormData({...formData, sellerEmail: e.target.value})}
+                    placeholder="Enter email address"
+                  />
+                </div>
+              </div>
+              
+              <div>
+                <Label htmlFor="sellerGSTIN">GSTIN *</Label>
+                <Input
+                  id="sellerGSTIN"
+                  value={formData.sellerGSTIN}
+                  onChange={(e) => setFormData({...formData, sellerGSTIN: e.target.value})}
+                  placeholder="Enter seller GSTIN"
+                  required
+                />
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Buyer Details */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Buyer Details</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div>
+                <Label htmlFor="buyerName">Customer Name *</Label>
+                <Input
+                  id="buyerName"
+                  value={formData.buyerName}
+                  onChange={(e) => setFormData({...formData, buyerName: e.target.value})}
+                  placeholder="Enter customer name"
+                  required
+                />
+              </div>
+              
+              <div>
+                <Label htmlFor="buyerAddress">Address</Label>
+                <Textarea
+                  id="buyerAddress"
+                  value={formData.buyerAddress}
+                  onChange={(e) => setFormData({...formData, buyerAddress: e.target.value})}
+                  placeholder="Enter customer address"
+                  rows={3}
+                />
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="buyerPhone">Phone Number</Label>
+                  <Input
+                    id="buyerPhone"
+                    value={formData.buyerPhone}
+                    onChange={(e) => setFormData({...formData, buyerPhone: e.target.value})}
+                    placeholder="Enter phone number"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="buyerEmail">Email</Label>
+                  <Input
+                    id="buyerEmail"
+                    type="email"
+                    value={formData.buyerEmail}
+                    onChange={(e) => setFormData({...formData, buyerEmail: e.target.value})}
+                    placeholder="Enter email address"
+                  />
+                </div>
+              </div>
+              
+              <div>
+                <Label htmlFor="buyerGSTIN">GSTIN</Label>
+                <Input
+                  id="buyerGSTIN"
+                  value={formData.buyerGSTIN}
+                  onChange={(e) => setFormData({...formData, buyerGSTIN: e.target.value})}
+                  placeholder="Enter buyer GSTIN"
+                />
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Invoice Date Section */}
           <Card>
             <CardHeader>
               <CardTitle>Invoice Details</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="gstin">GSTIN *</Label>
-                  <Input
-                    id="gstin"
-                    value={formData.gstin}
-                    onChange={(e) => setFormData({...formData, gstin: e.target.value})}
-                    placeholder="Enter GSTIN"
-                    required
-                  />
-                </div>
                 <div>
                   <Label htmlFor="invoiceDate">Invoice Date</Label>
                   <Input
@@ -146,55 +271,14 @@ const CreateInvoice = () => {
                     onChange={(e) => setFormData({...formData, invoiceDate: e.target.value})}
                   />
                 </div>
-              </div>
-              
-              <div>
-                <Label>Due Date</Label>
-                <Input
-                  value={getDueDate()}
-                  disabled
-                  className="bg-muted"
-                />
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Customer Details */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Customer Details</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div>
-                <Label htmlFor="customerName">Customer Name *</Label>
-                <Input
-                  id="customerName"
-                  value={formData.customerName}
-                  onChange={(e) => setFormData({...formData, customerName: e.target.value})}
-                  placeholder="Enter customer name"
-                  required
-                />
-              </div>
-              
-              <div>
-                <Label htmlFor="customerAddress">Address</Label>
-                <Textarea
-                  id="customerAddress"
-                  value={formData.customerAddress}
-                  onChange={(e) => setFormData({...formData, customerAddress: e.target.value})}
-                  placeholder="Enter customer address"
-                  rows={3}
-                />
-              </div>
-              
-              <div>
-                <Label htmlFor="customerContact">Contact</Label>
-                <Input
-                  id="customerContact"
-                  value={formData.customerContact}
-                  onChange={(e) => setFormData({...formData, customerContact: e.target.value})}
-                  placeholder="Enter contact details"
-                />
+                <div>
+                  <Label>Due Date</Label>
+                  <Input
+                    value={getDueDate()}
+                    disabled
+                    className="bg-muted"
+                  />
+                </div>
               </div>
             </CardContent>
           </Card>
