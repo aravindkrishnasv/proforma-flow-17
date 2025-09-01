@@ -11,7 +11,7 @@ import { toast } from "@/hooks/use-toast";
 import { useCreateInvoice } from "@/hooks/useInvoices";
 import { InvoiceItem } from "@/services/invoiceApi";
 import {useEffect} from "react";
-import numWords from "num-words";
+import { ToWords } from "to-words";
 const CreateInvoice = () => {
   useEffect(() => {
     document.title = "Create-Invoice";
@@ -48,7 +48,15 @@ const CreateInvoice = () => {
     };
     setItems([...items, newItem]);
   };
-
+  const toWords = new ToWords({
+  localeCode: 'en-IN',
+  converterOptions: {
+    currency: true,
+    ignoreDecimal: false,
+    ignoreZeroCurrency: false,
+    doNotAddOnly: false,
+  },
+});
   const removeItem = (id: string) => {
     setItems(items.filter(item => item.id !== id));
   };
@@ -79,9 +87,8 @@ const CreateInvoice = () => {
   const { subtotal, totalTax, total } = calculateTotals();
 
   const convertToWords = (amount: number): string => {
-    // Simple implementation - in real app, use a proper number-to-words library
     if (amount === 0) return "Zero Rupees Only";
-    return `${amount.toFixed(2)} Rupees Only`;
+    return toWords.convert(amount);
   };
 
   const getDueDate = () => {

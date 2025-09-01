@@ -15,7 +15,22 @@ export const INVOICE_QUERY_KEYS = {
 export const useInvoices = () => {
   return useQuery({
     queryKey: INVOICE_QUERY_KEYS.lists(),
-    queryFn: invoiceApi.getInvoices,
+    queryFn: async () => {
+      const invoices = await invoiceApi.getInvoices();
+      
+      // If the API returns nothing or not an array, return an empty array.
+      if (!Array.isArray(invoices)) {
+        return [];
+      }
+      
+      // This is the critical part: convert string numbers into actual numbers.
+      return invoices.map(invoice => ({
+        ...invoice,
+        subtotal: parseFloat(invoice.subtotal as any),
+        totalTax: parseFloat(invoice.totalTax as any),
+        totalAmount: parseFloat(invoice.totalAmount as any),
+      }));
+    },
     staleTime: 5 * 60 * 1000, // 5 minutes
   });
 };
