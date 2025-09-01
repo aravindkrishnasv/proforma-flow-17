@@ -75,9 +75,27 @@ const InvoiceList = () => {
   if (error) {
     return (
       <div className="container mx-auto px-4 py-8">
-        <div className="text-center text-red-600">
-          Error loading invoices: {error.message}
-        </div>
+        <Card>
+          <CardContent className="p-8">
+            <div className="text-center">
+              <div className="text-lg font-semibold text-amber-600 mb-4">
+                Backend Connection Required
+              </div>
+              <div className="text-muted-foreground mb-4">
+                The frontend is ready but no backend API is running yet.
+              </div>
+              <div className="text-sm text-muted-foreground mb-6">
+                Please start your pgAdmin-connected backend server at <code className="bg-muted px-2 py-1 rounded">/api/invoices</code>
+              </div>
+              <Link to="/create-invoice">
+                <Button variant="outline">
+                  <Plus className="h-4 w-4 mr-2" />
+                  Test Invoice Creation Form
+                </Button>
+              </Link>
+            </div>
+          </CardContent>
+        </Card>
       </div>
     );
   }
