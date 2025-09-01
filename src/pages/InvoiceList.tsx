@@ -9,11 +9,15 @@ import { Eye, Edit, Trash2, Search, Download, Plus } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { useInvoices, useDeleteInvoice, useGenerateInvoicePDF } from "@/hooks/useInvoices";
 import { Invoice } from "@/services/invoiceApi";
-
+import { useEffect } from "react";
 
 const InvoiceList = () => {
+  useEffect(() => {
+    document.title = "InvoiceList";
+  },[]);
   const [searchTerm, setSearchTerm] = useState("");
-  const { data: invoices = [], isLoading, error } = useInvoices();
+  const { data, isLoading, error } = useInvoices();
+  const invoices = data || [];
   const deleteInvoiceMutation = useDeleteInvoice();
   const generatePDFMutation = useGenerateInvoicePDF();
 

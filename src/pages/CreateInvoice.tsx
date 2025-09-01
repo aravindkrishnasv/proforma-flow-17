@@ -10,9 +10,12 @@ import { Plus, Trash2, Eye, Save } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { useCreateInvoice } from "@/hooks/useInvoices";
 import { InvoiceItem } from "@/services/invoiceApi";
-
-
+import {useEffect} from "react";
+import numWords from "num-words";
 const CreateInvoice = () => {
+  useEffect(() => {
+    document.title = "Create-Invoice";
+  },[]);
   const navigate = useNavigate();
   const createInvoiceMutation = useCreateInvoice();
   const [formData, setFormData] = useState({

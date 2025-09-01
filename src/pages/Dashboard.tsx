@@ -1,7 +1,11 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { FileText, Clock, DollarSign } from "lucide-react";
+import {useEffect} from "react";
 
 const Dashboard = () => {
+  useEffect(() => {
+    document.title = "Dashboard";
+  },[]);
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-3xl font-bold text-foreground mb-8">Dashboard</h1>
