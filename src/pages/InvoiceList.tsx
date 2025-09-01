@@ -1,30 +1,24 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { Eye, Edit, Trash2, Search } from "lucide-react";
+import { Eye, Edit, Trash2, Search, Download, Plus } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
+import { useInvoices, useDeleteInvoice, useGenerateInvoicePDF } from "@/hooks/useInvoices";
+import { Invoice } from "@/services/invoiceApi";
 
-interface Invoice {
-  id: string;
-  invoiceNumber: string;
-  customerName: string;
-  invoiceDate: string;
-  dueDate: string;
-  totalAmount: number;
-  status: "pending" | "paid" | "overdue";
-}
 
 const InvoiceList = () => {
   const [searchTerm, setSearchTerm] = useState("");
-  
-  // Mock data - in real app, this would come from Supabase
-  const [invoices] = useState<Invoice[]>([]);
+  const { data: invoices = [], isLoading, error } = useInvoices();
+  const deleteInvoiceMutation = useDeleteInvoice();
+  const generatePDFMutation = useGenerateInvoicePDF();
 
   const filteredInvoices = invoices.filter(invoice =>
-    invoice.customerName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    invoice.buyerName.toLowerCase().includes(searchTerm.toLowerCase()) ||
     invoice.invoiceNumber.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
@@ -34,13 +28,15 @@ const InvoiceList = () => {
         return "bg-green-100 text-green-800";
       case "overdue":
         return "bg-red-100 text-red-800";
+      case "sent":
+        return "bg-blue-100 text-blue-800";
       default:
         return "bg-yellow-100 text-yellow-800";
     }
   };
 
   const handleView = (invoice: Invoice) => {
-    // Here you would navigate to invoice view page or open modal
+    // TODO: Navigate to invoice view page or open modal
     toast({
       title: "View Invoice",
       description: `Viewing invoice ${invoice.invoiceNumber}`,
@@ -48,29 +44,54 @@ const InvoiceList = () => {
   };
 
   const handleEdit = (invoice: Invoice) => {
-    // Here you would navigate to edit page with pre-filled data
+    // TODO: Navigate to edit invoice page
     toast({
-      title: "Edit Invoice", 
+      title: "Edit Invoice",
       description: `Editing invoice ${invoice.invoiceNumber}`,
     });
   };
 
   const handleDelete = (invoice: Invoice) => {
-    // Here you would delete from Supabase after confirmation
-    toast({
-      title: "Delete Invoice",
-      description: `Invoice ${invoice.invoiceNumber} would be deleted`,
-      variant: "destructive",
-    });
+    if (!invoice.id) return;
+    
+    if (window.confirm(`Are you sure you want to delete invoice ${invoice.invoiceNumber}?`)) {
+      deleteInvoiceMutation.mutate(invoice.id);
+    }
   };
+
+  const handleDownloadPDF = (invoice: Invoice) => {
+    if (!invoice.id) return;
+    generatePDFMutation.mutate(invoice.id);
+  };
+
+  if (isLoading) {
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <div className="text-center">Loading invoices...</div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <div className="text-center text-red-600">
+          Error loading invoices: {error.message}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-3xl font-bold text-foreground">Invoice List</h1>
-        <Button asChild>
-          <a href="/create-invoice">Create New Invoice</a>
-        </Button>
+        <Link to="/create-invoice">
+          <Button>
+            <Plus className="h-4 w-4 mr-2" />
+            Create New Invoice
+          </Button>
+        </Link>
       </div>
 
       <Card>
@@ -102,9 +123,9 @@ const InvoiceList = () => {
               <TableHeader>
                 <TableRow>
                   <TableHead>Invoice No.</TableHead>
-                  <TableHead>Customer Name</TableHead>
-                  <TableHead>Invoice Date</TableHead>
-                  <TableHead>Due Date</TableHead>
+                      <TableHead>Customer Name</TableHead>
+                      <TableHead>Invoice Date</TableHead>
+                      <TableHead>Due Date</TableHead>
                   <TableHead>Total Amount</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead>Actions</TableHead>
@@ -116,12 +137,12 @@ const InvoiceList = () => {
                     <TableCell className="font-medium">
                       {invoice.invoiceNumber}
                     </TableCell>
-                    <TableCell>{invoice.customerName}</TableCell>
+                    <TableCell>{invoice.buyerName}</TableCell>
                     <TableCell>
                       {new Date(invoice.invoiceDate).toLocaleDateString()}
                     </TableCell>
                     <TableCell>
-                      {new Date(invoice.dueDate).toLocaleDateString()}
+                      {invoice.dueDate ? new Date(invoice.dueDate).toLocaleDateString() : '-'}
                     </TableCell>
                     <TableCell>₹{invoice.totalAmount.toFixed(2)}</TableCell>
                     <TableCell>

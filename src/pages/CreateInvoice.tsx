@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -7,16 +8,13 @@ import { Textarea } from "@/components/ui/textarea";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Plus, Trash2, Eye, Save } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
+import { useCreateInvoice } from "@/hooks/useInvoices";
+import { InvoiceItem } from "@/services/invoiceApi";
 
-interface InvoiceItem {
-  id: string;
-  name: string;
-  quantity: number;
-  rate: number;
-  taxPercent: number;
-}
 
 const CreateInvoice = () => {
+  const navigate = useNavigate();
+  const createInvoiceMutation = useCreateInvoice();
   const [formData, setFormData] = useState({
     // Seller Details
     sellerCompanyName: "",
@@ -100,10 +98,22 @@ const CreateInvoice = () => {
       return;
     }
 
-    // Here you would normally save to database via Supabase
-    toast({
-      title: "Invoice Saved",
-      description: "Your invoice has been saved successfully.",
+    const invoiceData = {
+      invoiceNumber: `INV-${Date.now()}`,
+      invoiceDate: formData.invoiceDate,
+      dueDate: getDueDate(),
+      ...formData,
+      items,
+      subtotal,
+      totalTax,
+      totalAmount: total,
+      status: "draft" as const,
+    };
+
+    createInvoiceMutation.mutate(invoiceData, {
+      onSuccess: (newInvoice) => {
+        navigate('/invoices');
+      },
     });
   };
 
