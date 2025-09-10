@@ -31,6 +31,114 @@ app.get('/api/invoices', async (req, res) => {
   }
 });
 
+app.get('/api/invoice-count', async (req, res) => {
+  try {
+    const currentYear = new Date().getFullYear();
+    const { rows } = await pool.query(
+      'SELECT COUNT(*) FROM invoices WHERE EXTRACT(YEAR FROM "invoiceDate") = $1',
+      [currentYear]
+    );
+    res.json({ count: parseInt(rows[0].count, 10) });
+  } catch (error) {
+    console.error('Error fetching invoice count:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// GET a single invoice by ID
+app.get('/api/invoices/:id', async (req, res) => {
+  const { id } = req.params;
+  try {
+    const { rows } = await pool.query('SELECT * FROM invoices WHERE id = $1', [id]);
+    if (rows.length === 0) {
+      return res.status(404).json({ error: 'Invoice not found' });
+    }
+    res.json(rows[0]);
+  } catch (error) {
+    console.error(`Error fetching invoice ${id}:`, error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// PUT (update) an invoice by ID
+app.put('/api/invoices/:id', async (req, res) => {
+  const { id } = req.params;
+  const {
+    invoiceNumber,
+    invoiceDate,
+    dueDate,
+    sellerCompanyName,
+    sellerAddress,
+    sellerPhone,
+    sellerEmail,
+    sellerGSTIN,
+    buyerName,
+    buyerAddress,
+    buyerPhone,
+    buyerEmail,
+    buyerGSTIN,
+    items,
+    subtotal,
+    totalTax,
+    totalAmount,
+    status,
+  } = req.body;
+
+  try {
+    const updatedInvoice = await pool.query(
+      `UPDATE invoices SET 
+        "invoiceNumber" = $1, "invoiceDate" = $2, "dueDate" = $3, "sellerCompanyName" = $4, "sellerAddress" = $5,
+        "sellerPhone" = $6, "sellerEmail" = $7, "sellerGSTIN" = $8, "buyerName" = $9, "buyerAddress" = $10,
+        "buyerPhone" = $11, "buyerEmail" = $12, "buyerGSTIN" = $13, items = $14, subtotal = $15,
+        "totalTax" = $16, "totalAmount" = $17, status = $18, "updatedAt" = now()
+      WHERE id = $19 RETURNING *`,
+      [
+        invoiceNumber,
+        invoiceDate,
+        dueDate,
+        sellerCompanyName,
+        sellerAddress,
+        sellerPhone,
+        sellerEmail,
+        sellerGSTIN,
+        buyerName,
+        buyerAddress,
+        buyerPhone,
+        buyerEmail,
+        buyerGSTIN,
+        JSON.stringify(items), // Ensure items are stringified for JSONB
+        subtotal,
+        totalTax,
+        totalAmount,
+        status,
+        id
+      ]
+    );
+
+    if (updatedInvoice.rows.length === 0) {
+      return res.status(404).json({ error: 'Invoice not found' });
+    }
+    
+    res.json(updatedInvoice.rows[0]);
+  } catch (error) {
+    console.error(`Error updating invoice ${id}:`, error);
+    res.status(500).json({ error: 'Failed to update invoice' });
+  }
+});
+
+
+// DELETE an invoice by ID
+app.delete('/api/invoices/:id', async (req, res) => {
+  const { id } = req.params;
+  try {
+    await pool.query('DELETE FROM invoices WHERE id = $1', [id]);
+    res.status(204).send(); // 204 No Content is a standard success response for delete
+  } catch (error) {
+    console.error(`Error deleting invoice ${id}:`, error);
+    res.status(500).json({ error: 'Failed to delete invoice' });
+  }
+});
+
 // POST a new invoice
 app.post('/api/invoices', async (req, res) => {
   const {

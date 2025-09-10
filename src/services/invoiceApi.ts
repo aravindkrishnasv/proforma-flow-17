@@ -57,6 +57,7 @@ export const invoiceApi = {
     return response.json();
   },
 
+
   // Create new invoice
   createInvoice: async (invoice: Omit<Invoice, 'id' | 'createdAt' | 'updatedAt'>): Promise<Invoice> => {
     const response = await fetch('/api/invoices', {
@@ -95,6 +96,14 @@ export const invoiceApi = {
     if (!response.ok) {
       throw new Error('Failed to delete invoice');
     }
+  },
+
+  getInvoiceCount: async (): Promise<{ count: number }> => {
+    const response = await fetch('/api/invoice-count');
+    if (!response.ok) {
+      throw new Error('Failed to fetch invoice count');
+    }
+    return response.json();
   },
 
   // Get invoice as PDF

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -9,15 +9,23 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Plus, Trash2, Eye, Save } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { useCreateInvoice } from "@/hooks/useInvoices";
-import { InvoiceItem } from "@/services/invoiceApi";
-import {useEffect} from "react";
+import { InvoiceItem, invoiceApi } from "@/services/invoiceApi";
 import { ToWords } from "to-words";
+
+const toWords = new ToWords({
+  localeCode: 'en-IN',
+  converterOptions: {
+    currency: true,
+    ignoreDecimal: false,
+    ignoreZeroCurrency: false,
+    doNotAddOnly: false,
+  },
+});
+
 const CreateInvoice = () => {
-  useEffect(() => {
-    document.title = "Create-Invoice";
-  },[]);
   const navigate = useNavigate();
   const createInvoiceMutation = useCreateInvoice();
+  const [invoiceNumber, setInvoiceNumber] = useState("");
   const [formData, setFormData] = useState({
     // Seller Details
     sellerCompanyName: "",
@@ -38,6 +46,24 @@ const CreateInvoice = () => {
 
   const [items, setItems] = useState<InvoiceItem[]>([]);
 
+  useEffect(() => {
+    document.title = "Create Invoice";
+    const generateNewInvoiceNumber = async () => {
+      try {
+        const { count } = await invoiceApi.getInvoiceCount();
+        const currentYear = new Date().getFullYear();
+        const newCount = count + 1;
+        setInvoiceNumber(`INV-${currentYear}-${newCount}`);
+      } catch (error) {
+        console.error("Failed to generate invoice number:", error);
+        // Fallback to the old method if there's an error
+        setInvoiceNumber(`INV-${Date.now()}`);
+      }
+    };
+    generateNewInvoiceNumber();
+  },[]);
+
+
   const addItem = () => {
     const newItem: InvoiceItem = {
       id: Date.now().toString(),
@@ -48,15 +74,7 @@ const CreateInvoice = () => {
     };
     setItems([...items, newItem]);
   };
-  const toWords = new ToWords({
-  localeCode: 'en-IN',
-  converterOptions: {
-    currency: true,
-    ignoreDecimal: false,
-    ignoreZeroCurrency: false,
-    doNotAddOnly: false,
-  },
-});
+  
   const removeItem = (id: string) => {
     setItems(items.filter(item => item.id !== id));
   };
@@ -98,7 +116,7 @@ const CreateInvoice = () => {
     return dueDate.toISOString().split('T')[0];
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!formData.sellerGSTIN || !formData.sellerCompanyName || !formData.buyerName || items.length === 0) {
       toast({
         title: "Validation Error",
@@ -109,7 +127,7 @@ const CreateInvoice = () => {
     }
 
     const invoiceData = {
-      invoiceNumber: `INV-${Date.now()}`,
+      invoiceNumber: invoiceNumber,
       invoiceDate: formData.invoiceDate,
       dueDate: getDueDate(),
       ...formData,
@@ -120,11 +138,12 @@ const CreateInvoice = () => {
       status: "draft" as const,
     };
 
-    createInvoiceMutation.mutate(invoiceData, {
-      onSuccess: (newInvoice) => {
-        navigate('/invoices');
-      },
-    });
+    try {
+      await createInvoiceMutation.mutateAsync(invoiceData);
+      navigate('/invoices');
+    } catch (error) {
+      console.error("Failed to create invoice:", error);
+    }
   };
 
   const handlePreview = () => {
@@ -283,6 +302,14 @@ const CreateInvoice = () => {
             <CardContent className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
+                    <Label>Invoice Number</Label>
+                    <Input
+                        value={invoiceNumber}
+                        disabled
+                        className="bg-muted"
+                    />
+                </div>
+                <div>
                   <Label htmlFor="invoiceDate">Invoice Date</Label>
                   <Input
                     id="invoiceDate"
@@ -436,3 +463,4 @@ const CreateInvoice = () => {
 };
 
 export default CreateInvoice;
+

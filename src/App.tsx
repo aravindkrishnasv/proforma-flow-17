@@ -9,6 +9,8 @@ import Dashboard from "./pages/Dashboard";
 import CreateInvoice from "./pages/CreateInvoice";
 import InvoiceList from "./pages/InvoiceList";
 import NotFound from "./pages/NotFound";
+import InvoiceDetail from "./pages/InvoiceDetail";
+import EditInvoice from "./pages/EditInvoice";
 
 const queryClient = new QueryClient();
 
@@ -26,7 +28,8 @@ const App = () => (
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/create-invoice" element={<CreateInvoice />} />
               <Route path="/invoices" element={<InvoiceList />} />
-              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+              <Route path="/invoices/:id" element={<InvoiceDetail />} />
+              <Route path="/edit-invoice/:id" element={<EditInvoice />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </main>

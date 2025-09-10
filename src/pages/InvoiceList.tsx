@@ -10,8 +10,10 @@ import { toast } from "@/hooks/use-toast";
 import { useInvoices, useDeleteInvoice, useGenerateInvoicePDF } from "@/hooks/useInvoices";
 import { Invoice } from "@/services/invoiceApi";
 import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 const InvoiceList = () => {
+  const navigate = useNavigate();
   useEffect(() => {
     document.title = "InvoiceList";
   },[]);
@@ -40,24 +42,16 @@ const InvoiceList = () => {
   };
 
   const handleView = (invoice: Invoice) => {
-    // TODO: Navigate to invoice view page or open modal
-    toast({
-      title: "View Invoice",
-      description: `Viewing invoice ${invoice.invoiceNumber}`,
-    });
+    navigate(`/invoices/${invoice.id}`);
   };
 
   const handleEdit = (invoice: Invoice) => {
-    // TODO: Navigate to edit invoice page
-    toast({
-      title: "Edit Invoice",
-      description: `Editing invoice ${invoice.invoiceNumber}`,
-    });
+    navigate(`/edit-invoice/${invoice.id}`);
   };
 
   const handleDelete = (invoice: Invoice) => {
     if (!invoice.id) return;
-    
+
     if (window.confirm(`Are you sure you want to delete invoice ${invoice.invoiceNumber}?`)) {
       deleteInvoiceMutation.mutate(invoice.id);
     }
