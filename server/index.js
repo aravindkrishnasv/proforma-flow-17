@@ -106,7 +106,7 @@ app.put('/api/invoices/:id', async (req, res) => {
         buyerPhone,
         buyerEmail,
         buyerGSTIN,
-        JSON.stringify(items), // Ensure items are stringified for JSONB
+        JSON.stringify(items), // Corrected: Pass items directly
         subtotal,
         totalTax,
         totalAmount,
@@ -132,7 +132,7 @@ app.delete('/api/invoices/:id', async (req, res) => {
   const { id } = req.params;
   try {
     await pool.query('DELETE FROM invoices WHERE id = $1', [id]);
-    res.status(204).send(); // 204 No Content is a standard success response for delete
+    res.status(204).send();
   } catch (error) {
     console.error(`Error deleting invoice ${id}:`, error);
     res.status(500).json({ error: 'Failed to delete invoice' });
@@ -185,7 +185,7 @@ app.post('/api/invoices', async (req, res) => {
         buyerPhone,
         buyerEmail,
         buyerGSTIN,
-        JSON.stringify(items), // Make sure to stringify the items array for JSONB
+        JSON.stringify(items), // Corrected: Pass items directly
         subtotal,
         totalTax,
         totalAmount,

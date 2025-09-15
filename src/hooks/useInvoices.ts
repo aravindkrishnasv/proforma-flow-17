@@ -39,7 +39,19 @@ export const useInvoices = () => {
 export const useInvoice = (id: string) => {
   return useQuery({
     queryKey: INVOICE_QUERY_KEYS.detail(id),
-    queryFn: () => invoiceApi.getInvoice(id),
+    queryFn: async () => {
+      const invoice = await invoiceApi.getInvoice(id);
+      // Safely parse items if it's a string
+      if (invoice && typeof invoice.items === 'string') {
+        try {
+          invoice.items = JSON.parse(invoice.items);
+        } catch (e) {
+          console.error("Failed to parse items from invoice:", e);
+          invoice.items = []; // Fallback to an empty array on parse error
+        }
+      }
+      return invoice;
+    },
     enabled: !!id,
   });
 };
