@@ -15,7 +15,12 @@ const BillList = () => {
     const fetchBills = async () => {
       try {
         const data = await accountsPayableApi.getBills();
-        setBills(data);
+        // Ensure total_amount is a number
+        const formattedData = data.map(bill => ({
+          ...bill,
+          total_amount: parseFloat(bill.total_amount as any),
+        }));
+        setBills(formattedData);
       } catch (error) {
         console.error("Failed to fetch bills", error);
       } finally {

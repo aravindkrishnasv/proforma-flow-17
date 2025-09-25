@@ -15,7 +15,12 @@ const PurchaseOrderList = () => {
     const fetchPurchaseOrders = async () => {
       try {
         const data = await accountsPayableApi.getPurchaseOrders();
-        setPurchaseOrders(data);
+        // Ensure total_amount is a number
+        const formattedData = data.map(po => ({
+          ...po,
+          total_amount: parseFloat(po.total_amount as any),
+        }));
+        setPurchaseOrders(formattedData);
       } catch (error) {
         console.error("Failed to fetch purchase orders", error);
       } finally {

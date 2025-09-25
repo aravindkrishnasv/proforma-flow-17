@@ -7,8 +7,20 @@ router.get('/', async (req, res) => {
   try {
     const { rows } = await pool.query('SELECT * FROM bills ORDER BY bill_date DESC');
     res.json(rows);
-  } catch (error) {
+  } catch (error)
+ {
     console.error('Error fetching bills:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// GET bill count
+router.get('/count', async (req, res) => {
+  try {
+    const { rows } = await pool.query('SELECT COUNT(*) FROM bills');
+    res.json({ count: parseInt(rows[0].count, 10) });
+  } catch (error) {
+    console.error('Error fetching bill count:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 });

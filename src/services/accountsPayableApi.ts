@@ -44,6 +44,13 @@ export const accountsPayableApi = {
     }
     return response.json();
   },
+  getPurchaseOrderCount: async (): Promise<{ count: number }> => {
+    const response = await fetch('/api/purchase-orders/count');
+    if (!response.ok) {
+      throw new Error('Failed to fetch purchase order count');
+    }
+    return response.json();
+  },
 
   // Bill API calls
   getBills: async (): Promise<Bill[]> => {
@@ -63,6 +70,13 @@ export const accountsPayableApi = {
     });
     if (!response.ok) {
       throw new Error('Failed to create bill');
+    }
+    return response.json();
+  },
+  getBillCount: async (): Promise<{ count: number }> => {
+    const response = await fetch('/api/bills/count');
+    if (!response.ok) {
+      throw new Error('Failed to fetch bill count');
     }
     return response.json();
   },

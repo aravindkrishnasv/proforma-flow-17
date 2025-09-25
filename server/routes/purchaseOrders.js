@@ -13,6 +13,17 @@ router.get('/', async (req, res) => {
   }
 });
 
+// GET purchase order count
+router.get('/count', async (req, res) => {
+  try {
+    const { rows } = await pool.query('SELECT COUNT(*) FROM purchase_orders');
+    res.json({ count: parseInt(rows[0].count, 10) });
+  } catch (error) {
+    console.error('Error fetching purchase order count:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 // POST a new purchase order
 router.post('/', async (req, res) => {
   const { po_number, vendor_id, items, total_amount, status } = req.body;
