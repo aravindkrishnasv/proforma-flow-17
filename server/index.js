@@ -2,7 +2,10 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
-const { Pool } = require('pg');
+const { pool } = require('./db'); // Assuming you've created a db.js as suggested
+const { createVendorsTable } = require('./models/vendor');
+const { createPurchaseOrdersTable } = require('./models/purchaseOrder');
+const { createBillsTable } = require('./models/bill');
 
 const app = express();
 const port = 3000;
@@ -10,15 +13,22 @@ const port = 3000;
 app.use(cors());
 app.use(express.json());
 
-// PostgreSQL connection setup
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-});
+// Import routes
+const vendorsRouter = require('./routes/vendors');
+const purchaseOrdersRouter = require('./routes/purchaseOrders');
+const billsRouter = require('./routes/bills');
+
+// Use new Accounts Payable routes
+app.use('/api/vendors', vendorsRouter);
+app.use('/api/purchase-orders', purchaseOrdersRouter);
+app.use('/api/bills', billsRouter);
 
 // A test endpoint
 app.get('/api', (req, res) => {
   res.send('Hello from the backend!');
 });
+
+// --- EXISTING INVOICE ROUTES ---
 
 // GET all invoices
 app.get('/api/invoices', async (req, res) => {
@@ -106,7 +116,7 @@ app.put('/api/invoices/:id', async (req, res) => {
         buyerPhone,
         buyerEmail,
         buyerGSTIN,
-        JSON.stringify(items), // Corrected: Pass items directly
+        JSON.stringify(items),
         subtotal,
         totalTax,
         totalAmount,
@@ -185,7 +195,7 @@ app.post('/api/invoices', async (req, res) => {
         buyerPhone,
         buyerEmail,
         buyerGSTIN,
-        JSON.stringify(items), // Corrected: Pass items directly
+        JSON.stringify(items),
         subtotal,
         totalTax,
         totalAmount,
@@ -200,7 +210,21 @@ app.post('/api/invoices', async (req, res) => {
   }
 });
 
+// --- DATABASE INITIALIZATION ---
+const initializeDatabase = async () => {
+  try {
+    // You should also create the 'invoices' table here if it's not already handled
+    // For now, we'll just initialize the new tables
+    await createVendorsTable();
+    await createPurchaseOrdersTable();
+    await createBillsTable();
+    console.log("Database tables initialized successfully.");
+  } catch (error) {
+    console.error("Error initializing database tables:", error);
+  }
+};
 
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
+  initializeDatabase();
 });

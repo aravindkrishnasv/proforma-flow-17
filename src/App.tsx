@@ -11,6 +11,12 @@ import InvoiceList from "./pages/InvoiceList";
 import NotFound from "./pages/NotFound";
 import InvoiceDetail from "./pages/InvoiceDetail";
 import EditInvoice from "./pages/EditInvoice";
+import VendorList from "./pages/VendorList";
+import CreateVendor from "./pages/CreateVendor";
+import PurchaseOrderList from "./pages/PurchaseOrderList";
+import CreatePurchaseOrder from "./pages/CreatePurchaseOrder";
+import BillList from "./pages/BillList";
+import CreateBill from "./pages/CreateBill";
 
 const queryClient = new QueryClient();
 
@@ -30,6 +36,12 @@ const App = () => (
               <Route path="/invoices" element={<InvoiceList />} />
               <Route path="/invoices/:id" element={<InvoiceDetail />} />
               <Route path="/edit-invoice/:id" element={<EditInvoice />} />
+              <Route path="/vendors" element={<VendorList />} />
+              <Route path="/create-vendor" element={<CreateVendor />} />
+              <Route path="/purchase-orders" element={<PurchaseOrderList />} />
+              <Route path="/create-purchase-order" element={<CreatePurchaseOrder />} />
+              <Route path="/bills" element={<BillList />} />
+              <Route path="/create-bill" element={<CreateBill />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </main>

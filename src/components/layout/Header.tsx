@@ -1,6 +1,6 @@
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
-import { FileText, Home, Plus, BarChart3 } from "lucide-react";
+import { FileText, Home, Plus, BarChart3, Users, ShoppingCart, FileSignature } from "lucide-react";
 
 const Header = () => {
   const location = useLocation();
@@ -13,13 +13,28 @@ const Header = () => {
     },
     {
       name: "Create Invoice",
-      href: "/create-invoice", 
+      href: "/create-invoice",
       icon: Plus,
     },
     {
       name: "Invoice List",
       href: "/invoices",
       icon: FileText,
+    },
+    {
+      name: "Vendors",
+      href: "/vendors",
+      icon: Users,
+    },
+    {
+      name: "Purchase Orders",
+      href: "/purchase-orders",
+      icon: ShoppingCart,
+    },
+    {
+      name: "Bills",
+      href: "/bills",
+      icon: FileSignature,
     },
   ];
 
