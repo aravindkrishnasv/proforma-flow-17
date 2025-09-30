@@ -5,6 +5,8 @@ export interface Vendor {
   phone: string;
   email: string;
   gstin: string;
+  status: 'pending' | 'approved' | 'rejected';
+  communication_logs: any[];
   createdAt: string;
   updatedAt: string;
 }
@@ -22,7 +24,8 @@ export interface PurchaseOrder {
   vendor_id: number;
   items: PurchaseOrderItem[];
   total_amount: number;
-  status: 'draft' | 'approved' | 'billed';
+  advance_payment: number;
+  status: 'draft' | 'approved' | 'sent' | 'partially_received' | 'closed' | 'billed';
   createdAt: string;
   updatedAt: string;
 }
@@ -44,6 +47,8 @@ export interface Bill {
   items: BillItem[];
   total_amount: number;
   status: 'unpaid' | 'paid' | 'overdue';
+  is_recurring: boolean;
+  recurrence_frequency: string;
   createdAt: string;
   updatedAt: string;
 }

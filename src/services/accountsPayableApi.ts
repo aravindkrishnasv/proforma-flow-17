@@ -9,7 +9,7 @@ export const accountsPayableApi = {
     }
     return response.json();
   },
-  createVendor: async (vendor: Omit<Vendor, 'id' | 'createdAt' | 'updatedAt'>): Promise<Vendor> => {
+  createVendor: async (vendor: Omit<Vendor, 'id' | 'createdAt' | 'updatedAt' | 'status' | 'communication_logs'>): Promise<Vendor> => {
     const response = await fetch('/api/vendors', {
       method: 'POST',
       headers: {
@@ -20,6 +20,15 @@ export const accountsPayableApi = {
     if (!response.ok) {
       throw new Error('Failed to create vendor');
     }
+    return response.json();
+  },
+  updateVendorStatus: async (id: number, status: 'approved' | 'rejected'): Promise<Vendor> => {
+    const response = await fetch(`/api/vendors/${id}/status`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status }),
+    });
+    if (!response.ok) throw new Error('Failed to update vendor status');
     return response.json();
   },
 
@@ -57,7 +66,6 @@ export const accountsPayableApi = {
       throw new Error('Failed to fetch purchase order');
     }
     const po = await response.json();
-    // The items from the DB are a string, so we need to parse them
     if (typeof po.items === 'string') {
       po.items = JSON.parse(po.items);
     }
@@ -90,6 +98,15 @@ export const accountsPayableApi = {
     if (!response.ok) {
       throw new Error('Failed to fetch bill count');
     }
+    return response.json();
+  },
+  batchPayBills: async (bill_ids: number[]): Promise<Bill[]> => {
+    const response = await fetch('/api/bills/batch-payment', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ bill_ids }),
+    });
+    if (!response.ok) throw new Error('Failed to process batch payment');
     return response.json();
   },
 };

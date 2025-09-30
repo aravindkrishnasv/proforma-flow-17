@@ -12,6 +12,8 @@ const createBillsTable = async () => {
       items JSONB,
       total_amount NUMERIC(10, 2),
       status VARCHAR(20) DEFAULT 'unpaid',
+      is_recurring BOOLEAN DEFAULT false,
+      recurrence_frequency VARCHAR(20),
       "createdAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
       "updatedAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
     );

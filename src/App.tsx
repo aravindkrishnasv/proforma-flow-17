@@ -17,6 +17,9 @@ import PurchaseOrderList from "./pages/PurchaseOrderList";
 import CreatePurchaseOrder from "./pages/CreatePurchaseOrder";
 import BillList from "./pages/BillList";
 import CreateBill from "./pages/CreateBill";
+import VendorPortal from "./pages/VendorPortal";
+import VendorOnboarding from "./pages/VendorOnboarding";
+import SubmitInvoice from "./pages/SubmitInvoice";
 
 const queryClient = new QueryClient();
 
@@ -42,6 +45,9 @@ const App = () => (
               <Route path="/create-purchase-order" element={<CreatePurchaseOrder />} />
               <Route path="/bills" element={<BillList />} />
               <Route path="/create-bill" element={<CreateBill />} />
+              <Route path="/vendor-portal" element={<VendorPortal />} />
+              <Route path="/vendor-onboarding" element={<VendorOnboarding />} />
+              <Route path="/submit-invoice" element={<SubmitInvoice />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </main>

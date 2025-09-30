@@ -6,6 +6,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Plus } from "lucide-react";
 import { accountsPayableApi } from "@/services/accountsPayableApi";
 import { PurchaseOrder } from "@/types";
+import { Badge } from "@/components/ui/badge";
 
 const PurchaseOrderList = () => {
   const [purchaseOrders, setPurchaseOrders] = useState<PurchaseOrder[]>([]);
@@ -15,10 +16,10 @@ const PurchaseOrderList = () => {
     const fetchPurchaseOrders = async () => {
       try {
         const data = await accountsPayableApi.getPurchaseOrders();
-        // Ensure total_amount is a number
         const formattedData = data.map(po => ({
           ...po,
           total_amount: parseFloat(po.total_amount as any),
+          advance_payment: parseFloat(po.advance_payment as any),
         }));
         setPurchaseOrders(formattedData);
       } catch (error) {
@@ -60,6 +61,7 @@ const PurchaseOrderList = () => {
                 <TableHead>PO Number</TableHead>
                 <TableHead>Vendor ID</TableHead>
                 <TableHead>Total Amount</TableHead>
+                <TableHead>Advance Payment</TableHead>
                 <TableHead>Status</TableHead>
               </TableRow>
             </TableHeader>
@@ -69,7 +71,8 @@ const PurchaseOrderList = () => {
                   <TableCell>{po.po_number}</TableCell>
                   <TableCell>{po.vendor_id}</TableCell>
                   <TableCell>₹{po.total_amount.toFixed(2)}</TableCell>
-                  <TableCell>{po.status}</TableCell>
+                  <TableCell>₹{po.advance_payment.toFixed(2)}</TableCell>
+                  <TableCell><Badge>{po.status}</Badge></TableCell>
                 </TableRow>
               ))}
             </TableBody>

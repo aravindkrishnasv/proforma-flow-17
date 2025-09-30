@@ -8,6 +8,7 @@ const createPurchaseOrdersTable = async () => {
       vendor_id INTEGER REFERENCES vendors(id),
       items JSONB,
       total_amount NUMERIC(10, 2),
+      advance_payment NUMERIC(10, 2) DEFAULT 0,
       status VARCHAR(20) DEFAULT 'draft',
       "createdAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
       "updatedAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP

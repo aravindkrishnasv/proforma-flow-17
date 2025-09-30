@@ -9,7 +9,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Plus, Trash2, Save } from "lucide-react";
 import { accountsPayableApi } from "@/services/accountsPayableApi";
 import { toast } from "@/hooks/use-toast";
-import { Vendor, PurchaseOrderItem } from "@/types";
+import { Vendor, PurchaseOrderItem, PurchaseOrder } from "@/types";
 
 const CreatePurchaseOrder = () => {
   const navigate = useNavigate();
@@ -18,7 +18,8 @@ const CreatePurchaseOrder = () => {
   const [poNumber, setPoNumber] = useState("");
   const [formData, setFormData] = useState({
     vendor_id: "",
-    status: "draft" as const,
+    advance_payment: 0,
+    status: "draft" as PurchaseOrder['status'],
   });
 
   useEffect(() => {
@@ -28,7 +29,7 @@ const CreatePurchaseOrder = () => {
           accountsPayableApi.getVendors(),
           accountsPayableApi.getPurchaseOrderCount(),
         ]);
-        setVendors(vendorsData);
+        setVendors(vendorsData.filter(v => v.status === 'approved'));
         const currentYear = new Date().getFullYear();
         const newCount = poCountData.count + 1;
         setPoNumber(`PO-${currentYear}-${String(newCount).padStart(3, '0')}`);
@@ -118,7 +119,7 @@ const CreatePurchaseOrder = () => {
                 <Label htmlFor="vendor_id">Vendor *</Label>
                 <Select onValueChange={(value) => setFormData({ ...formData, vendor_id: value })} value={formData.vendor_id}>
                   <SelectTrigger>
-                    <SelectValue placeholder="Select a vendor" />
+                    <SelectValue placeholder="Select an approved vendor" />
                   </SelectTrigger>
                   <SelectContent>
                     {vendors.map(vendor => (
@@ -127,6 +128,7 @@ const CreatePurchaseOrder = () => {
                   </SelectContent>
                 </Select>
               </div>
+               <div><Label htmlFor="advance_payment">Advance Payment</Label><Input id="advance_payment" type="number" value={formData.advance_payment} onChange={(e) => setFormData({ ...formData, advance_payment: parseFloat(e.target.value) || 0 })} /></div>
             </CardContent>
           </Card>
           <Card>
