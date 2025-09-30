@@ -15,27 +15,33 @@ const CreatePurchaseOrder = () => {
   const navigate = useNavigate();
   const [vendors, setVendors] = useState<Vendor[]>([]);
   const [items, setItems] = useState<PurchaseOrderItem[]>([]);
+  const [poNumber, setPoNumber] = useState("");
   const [formData, setFormData] = useState({
-    po_number: "",
     vendor_id: "",
     status: "draft" as const,
   });
 
   useEffect(() => {
-    const fetchVendors = async () => {
+    const fetchInitialData = async () => {
       try {
-        const data = await accountsPayableApi.getVendors();
-        setVendors(data);
+        const [vendorsData, poCountData] = await Promise.all([
+          accountsPayableApi.getVendors(),
+          accountsPayableApi.getPurchaseOrderCount(),
+        ]);
+        setVendors(vendorsData);
+        const currentYear = new Date().getFullYear();
+        const newCount = poCountData.count + 1;
+        setPoNumber(`PO-${currentYear}-${String(newCount).padStart(3, '0')}`);
       } catch (error) {
-        console.error("Failed to fetch vendors", error);
+        console.error("Failed to fetch initial data", error);
         toast({
           title: "Error",
-          description: "Failed to fetch vendors",
+          description: "Failed to fetch initial data",
           variant: "destructive",
         });
       }
     };
-    fetchVendors();
+    fetchInitialData();
   }, []);
 
   const addItem = () => {
@@ -63,7 +69,7 @@ const CreatePurchaseOrder = () => {
   };
 
   const handleSave = async () => {
-    if (!formData.po_number || !formData.vendor_id || items.length === 0) {
+    if (!poNumber || !formData.vendor_id || items.length === 0) {
       toast({
         title: "Validation Error",
         description: "Please fill all required fields and add at least one item.",
@@ -74,6 +80,7 @@ const CreatePurchaseOrder = () => {
 
     const purchaseOrderData = {
       ...formData,
+      po_number: poNumber,
       vendor_id: parseInt(formData.vendor_id),
       items,
       total_amount: calculateTotal(),
@@ -106,7 +113,7 @@ const CreatePurchaseOrder = () => {
               <CardTitle>Purchase Order Details</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div><Label htmlFor="po_number">PO Number *</Label><Input id="po_number" value={formData.po_number} onChange={(e) => setFormData({ ...formData, po_number: e.target.value })} placeholder="Enter PO number" required /></div>
+              <div><Label htmlFor="po_number">PO Number *</Label><Input id="po_number" value={poNumber} disabled className="bg-muted" /></div>
               <div>
                 <Label htmlFor="vendor_id">Vendor *</Label>
                 <Select onValueChange={(value) => setFormData({ ...formData, vendor_id: value })} value={formData.vendor_id}>

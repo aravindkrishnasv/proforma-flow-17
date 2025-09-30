@@ -51,6 +51,18 @@ export const accountsPayableApi = {
     }
     return response.json();
   },
+  getPurchaseOrder: async (id: string): Promise<PurchaseOrder> => {
+    const response = await fetch(`/api/purchase-orders/${id}`);
+    if (!response.ok) {
+      throw new Error('Failed to fetch purchase order');
+    }
+    const po = await response.json();
+    // The items from the DB are a string, so we need to parse them
+    if (typeof po.items === 'string') {
+      po.items = JSON.parse(po.items);
+    }
+    return po;
+  },
 
   // Bill API calls
   getBills: async (): Promise<Bill[]> => {
