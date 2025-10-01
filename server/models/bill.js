@@ -2,11 +2,11 @@ const { pool } = require('../db');
 
 const createBillsTable = async () => {
   const query = `
-    CREATE TABLE IF NOT EXISTS bills (
+    CREATE TABLE IF NOT EXISTS FINM.bills (
       id SERIAL PRIMARY KEY,
       bill_number VARCHAR(50) NOT NULL UNIQUE,
-      vendor_id INTEGER REFERENCES vendors(id),
-      purchase_order_id INTEGER REFERENCES purchase_orders(id),
+      vendor_id INTEGER REFERENCES FINM.vendors(id),
+      purchase_order_id INTEGER REFERENCES FINM.purchase_orders(id),
       bill_date DATE,
       due_date DATE,
       items JSONB,

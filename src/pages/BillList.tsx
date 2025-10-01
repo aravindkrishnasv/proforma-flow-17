@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Plus, DollarSign } from "lucide-react";
+import { Plus } from "lucide-react";
 import { accountsPayableApi } from "@/services/accountsPayableApi";
 import { Bill } from "@/types";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -13,6 +13,7 @@ const BillList = () => {
   const [bills, setBills] = useState<Bill[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedBills, setSelectedBills] = useState<number[]>([]);
+  const navigate = useNavigate();
 
   const fetchBills = async () => {
     try {
@@ -43,22 +44,7 @@ const BillList = () => {
         return;
     }
 
-    try {
-        await accountsPayableApi.batchPayBills(selectedBills);
-        toast({
-            title: "Success",
-            description: "Batch payment processed successfully.",
-        });
-        fetchBills(); // Refresh the list
-        setSelectedBills([]); // Clear selection
-    } catch (error) {
-        console.error("Failed to process batch payment", error);
-        toast({
-            title: "Error",
-            description: "Failed to process batch payment.",
-            variant: "destructive",
-        });
-    }
+    navigate("/payment", { state: { selectedBills, bills } });
   };
 
   const handleSelectBill = (id: number) => {
@@ -82,7 +68,7 @@ const BillList = () => {
         <div>
           {selectedBills.length > 0 && (
             <Button onClick={handleBatchPayment} className="mr-4">
-                <DollarSign className="h-4 w-4 mr-2" />
+                <span className="mr-2">₹</span>
                 Pay Selected ({selectedBills.length})
             </Button>
           )}

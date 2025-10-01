@@ -33,7 +33,7 @@ app.get('/api', (req, res) => {
 // GET all invoices
 app.get('/api/invoices', async (req, res) => {
   try {
-    const { rows } = await pool.query('SELECT * FROM invoices ORDER BY "createdAt" DESC');
+    const { rows } = await pool.query('SELECT * FROM FINM.invoices ORDER BY "createdAt" DESC');
     res.json(rows);
   } catch (error) {
     console.error('Error fetching invoices:', error);
@@ -45,7 +45,7 @@ app.get('/api/invoice-count', async (req, res) => {
   try {
     const currentYear = new Date().getFullYear();
     const { rows } = await pool.query(
-      'SELECT COUNT(*) FROM invoices WHERE EXTRACT(YEAR FROM "invoiceDate") = $1',
+      'SELECT COUNT(*) FROM FINM.invoices WHERE EXTRACT(YEAR FROM "invoiceDate") = $1',
       [currentYear]
     );
     res.json({ count: parseInt(rows[0].count, 10) });
@@ -59,7 +59,7 @@ app.get('/api/invoice-count', async (req, res) => {
 app.get('/api/invoices/:id', async (req, res) => {
   const { id } = req.params;
   try {
-    const { rows } = await pool.query('SELECT * FROM invoices WHERE id = $1', [id]);
+    const { rows } = await pool.query('SELECT * FROM FINM.invoices WHERE id = $1', [id]);
     if (rows.length === 0) {
       return res.status(404).json({ error: 'Invoice not found' });
     }
@@ -96,7 +96,7 @@ app.put('/api/invoices/:id', async (req, res) => {
 
   try {
     const updatedInvoice = await pool.query(
-      `UPDATE invoices SET 
+      `UPDATE FINM.invoices SET 
         "invoiceNumber" = $1, "invoiceDate" = $2, "dueDate" = $3, "sellerCompanyName" = $4, "sellerAddress" = $5,
         "sellerPhone" = $6, "sellerEmail" = $7, "sellerGSTIN" = $8, "buyerName" = $9, "buyerAddress" = $10,
         "buyerPhone" = $11, "buyerEmail" = $12, "buyerGSTIN" = $13, items = $14, subtotal = $15,
@@ -141,7 +141,7 @@ app.put('/api/invoices/:id', async (req, res) => {
 app.delete('/api/invoices/:id', async (req, res) => {
   const { id } = req.params;
   try {
-    await pool.query('DELETE FROM invoices WHERE id = $1', [id]);
+    await pool.query('DELETE FROM FINM.invoices WHERE id = $1', [id]);
     res.status(204).send();
   } catch (error) {
     console.error(`Error deleting invoice ${id}:`, error);
@@ -174,7 +174,7 @@ app.post('/api/invoices', async (req, res) => {
 
   try {
     const newInvoice = await pool.query(
-      `INSERT INTO invoices (
+      `INSERT INTO FINM.invoices (
         "invoiceNumber", "invoiceDate", "dueDate", "sellerCompanyName", "sellerAddress",
         "sellerPhone", "sellerEmail", "sellerGSTIN", "buyerName", "buyerAddress",
         "buyerPhone", "buyerEmail", "buyerGSTIN", items, subtotal,
@@ -210,11 +210,40 @@ app.post('/api/invoices', async (req, res) => {
   }
 });
 
+const createInvoicesTable = async () => {
+  const query = `
+    CREATE TABLE IF NOT EXISTS FINM.invoices (
+      id SERIAL PRIMARY KEY,
+      "invoiceNumber" VARCHAR(50) NOT NULL UNIQUE,
+      "invoiceDate" DATE,
+      "dueDate" DATE,
+      "sellerCompanyName" VARCHAR(255),
+      "sellerAddress" TEXT,
+      "sellerPhone" VARCHAR(20),
+      "sellerEmail" VARCHAR(255),
+      "sellerGSTIN" VARCHAR(15),
+      "buyerName" VARCHAR(255),
+      "buyerAddress" TEXT,
+      "buyerPhone" VARCHAR(20),
+      "buyerEmail" VARCHAR(255),
+      "buyerGSTIN" VARCHAR(15),
+      items JSONB,
+      subtotal NUMERIC(10, 2),
+      "totalTax" NUMERIC(10, 2),
+      "totalAmount" NUMERIC(10, 2),
+      status VARCHAR(20),
+      "createdAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+      "updatedAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+    );
+  `;
+  await pool.query(query);
+};
+
 // --- DATABASE INITIALIZATION ---
 const initializeDatabase = async () => {
   try {
-    // You should also create the 'invoices' table here if it's not already handled
-    // For now, we'll just initialize the new tables
+    await pool.query('CREATE SCHEMA IF NOT EXISTS FINM');
+    await createInvoicesTable();
     await createVendorsTable();
     await createPurchaseOrdersTable();
     await createBillsTable();

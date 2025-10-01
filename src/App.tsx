@@ -20,6 +20,7 @@ import CreateBill from "./pages/CreateBill";
 import VendorPortal from "./pages/VendorPortal";
 import VendorOnboarding from "./pages/VendorOnboarding";
 import SubmitInvoice from "./pages/SubmitInvoice";
+import PaymentPage from "./pages/PaymentPage";
 
 const queryClient = new QueryClient();
 
@@ -48,6 +49,7 @@ const App = () => (
               <Route path="/vendor-portal" element={<VendorPortal />} />
               <Route path="/vendor-onboarding" element={<VendorOnboarding />} />
               <Route path="/submit-invoice" element={<SubmitInvoice />} />
+              <Route path="/payment" element={<PaymentPage />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </main>

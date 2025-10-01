@@ -2,7 +2,7 @@ const { pool } = require('../db');
 
 const createVendorsTable = async () => {
   const query = `
-    CREATE TABLE IF NOT EXISTS vendors (
+    CREATE TABLE IF NOT EXISTS FINM.vendors (
       id SERIAL PRIMARY KEY,
       name VARCHAR(255) NOT NULL,
       address TEXT,

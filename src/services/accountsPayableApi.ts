@@ -22,7 +22,7 @@ export const accountsPayableApi = {
     }
     return response.json();
   },
-  updateVendorStatus: async (id: number, status: 'approved' | 'rejected'): Promise<Vendor> => {
+  updateVendorStatus: async (id: number, status: Vendor['status']): Promise<Vendor> => {
     const response = await fetch(`/api/vendors/${id}/status`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },

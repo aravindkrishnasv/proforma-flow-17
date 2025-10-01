@@ -5,7 +5,7 @@ const router = express.Router();
 // GET all vendors
 router.get('/', async (req, res) => {
   try {
-    const { rows } = await pool.query('SELECT * FROM vendors ORDER BY name');
+    const { rows } = await pool.query('SELECT * FROM FINM.vendors ORDER BY name');
     res.json(rows);
   } catch (error) {
     console.error('Error fetching vendors:', error);
@@ -18,7 +18,7 @@ router.post('/', async (req, res) => {
   const { name, address, phone, email, gstin } = req.body;
   try {
     const newVendor = await pool.query(
-      'INSERT INTO vendors (name, address, phone, email, gstin, status) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *',
+      'INSERT INTO FINM.vendors (name, address, phone, email, gstin, status) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *',
       [name, address, phone, email, gstin, 'pending']
     );
     res.status(201).json(newVendor.rows[0]);
@@ -34,7 +34,7 @@ router.put('/:id/status', async (req, res) => {
     const { status } = req.body;
     try {
         const updatedVendor = await pool.query(
-            'UPDATE vendors SET status = $1, "updatedAt" = now() WHERE id = $2 RETURNING *',
+            'UPDATE FINM.vendors SET status = $1, "updatedAt" = now() WHERE id = $2 RETURNING *',
             [status, id]
         );
         res.json(updatedVendor.rows[0]);
@@ -50,7 +50,7 @@ router.post('/:id/communications', async (req, res) => {
     const { log } = req.body;
     try {
         const updatedVendor = await pool.query(
-            'UPDATE vendors SET communication_logs = communication_logs || $1, "updatedAt" = now() WHERE id = $2 RETURNING *',
+            'UPDATE FINM.vendors SET communication_logs = communication_logs || $1, "updatedAt" = now() WHERE id = $2 RETURNING *',
             [JSON.stringify(log), id]
         );
         res.json(updatedVendor.rows[0]);

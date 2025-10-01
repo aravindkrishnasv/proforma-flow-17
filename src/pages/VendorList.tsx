@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Plus, Check, X } from "lucide-react";
+import { Plus, Check, X, Undo2 } from "lucide-react";
 import { accountsPayableApi } from "@/services/accountsPayableApi";
 import { Vendor } from "@/types";
 import { Badge } from "@/components/ui/badge";
@@ -30,7 +30,7 @@ const VendorList = () => {
     fetchVendors();
   }, []);
 
-  const handleUpdateStatus = async (id: number, status: "approved" | "rejected") => {
+  const handleUpdateStatus = async (id: number, status: "approved" | "rejected" | "pending") => {
     try {
         await accountsPayableApi.updateVendorStatus(id, status);
         toast({
@@ -100,16 +100,38 @@ const VendorList = () => {
                     </Badge>
                   </TableCell>
                   <TableCell>
-                    {vendor.status === 'pending' && (
-                        <div className="flex gap-2">
-                            <Button size="sm" onClick={() => handleUpdateStatus(vendor.id, 'approved')}>
-                                <Check className="h-4 w-4" />
-                            </Button>
-                            <Button size="sm" variant="destructive" onClick={() => handleUpdateStatus(vendor.id, 'rejected')}>
-                                <X className="h-4 w-4" />
-                            </Button>
-                        </div>
-                    )}
+                    <div className="flex gap-2">
+                      {vendor.status === 'pending' && (
+                          <>
+                              <Button size="sm" onClick={() => handleUpdateStatus(vendor.id, 'approved')}>
+                                  <Check className="h-4 w-4" />
+                              </Button>
+                              <Button size="sm" variant="destructive" onClick={() => handleUpdateStatus(vendor.id, 'rejected')}>
+                                  <X className="h-4 w-4" />
+                              </Button>
+                          </>
+                      )}
+                      {vendor.status === 'approved' && (
+                          <>
+                              <Button size="sm" variant="secondary" onClick={() => handleUpdateStatus(vendor.id, 'pending')}>
+                                  <Undo2 className="h-4 w-4" />
+                              </Button>
+                              <Button size="sm" variant="destructive" onClick={() => handleUpdateStatus(vendor.id, 'rejected')}>
+                                  <X className="h-4 w-4" />
+                              </Button>
+                          </>
+                      )}
+                      {vendor.status === 'rejected' && (
+                          <>
+                              <Button size="sm" variant="secondary" onClick={() => handleUpdateStatus(vendor.id, 'pending')}>
+                                  <Undo2 className="h-4 w-4" />
+                              </Button>
+                              <Button size="sm" onClick={() => handleUpdateStatus(vendor.id, 'approved')}>
+                                  <Check className="h-4 w-4" />
+                              </Button>
+                          </>
+                      )}
+                    </div>
                   </TableCell>
                 </TableRow>
               ))}

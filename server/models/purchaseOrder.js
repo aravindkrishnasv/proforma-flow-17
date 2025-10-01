@@ -2,10 +2,10 @@ const { pool } = require('../db');
 
 const createPurchaseOrdersTable = async () => {
   const query = `
-    CREATE TABLE IF NOT EXISTS purchase_orders (
+    CREATE TABLE IF NOT EXISTS FINM.purchase_orders (
       id SERIAL PRIMARY KEY,
       po_number VARCHAR(50) NOT NULL UNIQUE,
-      vendor_id INTEGER REFERENCES vendors(id),
+      vendor_id INTEGER REFERENCES FINM.vendors(id),
       items JSONB,
       total_amount NUMERIC(10, 2),
       advance_payment NUMERIC(10, 2) DEFAULT 0,
