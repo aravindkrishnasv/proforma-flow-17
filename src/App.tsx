@@ -25,11 +25,7 @@ import AccountsPayablePortal from "./pages/AccountsPayablePortal";
 import AccountsReceivablePortal from "./pages/AccountsReceivablePortal";
 import CustomerList from "./pages/CustomerList";
 import CreateCustomer from "./pages/CreateCustomer";
-import EstimateList from "./pages/EstimateList";
-import CreateEstimate from "./pages/CreateEstimate";
-import RecurringInvoiceList from "./pages/RecurringInvoiceList";
 import PaymentsReceivedList from "./pages/PaymentsReceivedList";
-import CreditNoteList from "./pages/CreditNoteList";
 
 const queryClient = new QueryClient();
 
@@ -65,11 +61,7 @@ const App = () => (
               {/* AR Routes */}
               <Route path="/customers" element={<CustomerList />} />
               <Route path="/create-customer" element={<CreateCustomer />} />
-              <Route path="/estimates" element={<EstimateList />} />
-              <Route path="/create-estimate" element={<CreateEstimate />} />
-              <Route path="/recurring-invoices" element={<RecurringInvoiceList />} />
               <Route path="/payments-received" element={<PaymentsReceivedList />} />
-              <Route path="/credit-notes" element={<CreditNoteList />} />
               
               {/* Other Routes */}
               <Route path="/vendor-portal" element={<VendorPortal />} />

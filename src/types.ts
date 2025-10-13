@@ -61,23 +61,3 @@ export interface Bill {
   createdAt: string;
   updatedAt: string;
 }
-
-export interface EstimateItem {
-  id: string;
-  name: string;
-  quantity: number;
-  rate: number;
-}
-
-export interface Estimate {
-  id: number;
-  estimate_number: string;
-  customer_id: number;
-  estimate_date: string;
-  expiry_date: string;
-  items: EstimateItem[];
-  total_amount: number;
-  status: 'draft' | 'sent' | 'accepted' | 'declined';
-  createdAt: string;
-  updatedAt: string;
-}

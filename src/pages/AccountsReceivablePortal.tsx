@@ -56,54 +56,6 @@ const AccountsReceivablePortal = () => {
             </Link>
           </CardContent>
         </Card>
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <FileText className="h-5 w-5" />
-              Estimates / Quotes
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-muted-foreground mb-4">
-              Create and send quotes to your customers.
-            </p>
-            <Link to="/estimates">
-              <Button variant="outline">View Estimates</Button>
-            </Link>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Repeat className="h-5 w-5" />
-              Recurring Invoices
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-muted-foreground mb-4">
-              Manage scheduled invoices for subscriptions.
-            </p>
-            <Link to="/recurring-invoices">
-              <Button variant="outline">View Recurring</Button>
-            </Link>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <ReceiptIndianRupee className="h-5 w-5" />
-              Credit Notes
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-muted-foreground mb-4">
-              Issue credits and manage customer returns.
-            </p>
-            <Link to="/credit-notes">
-              <Button variant="outline">View Credit Notes</Button>
-            </Link>
-          </CardContent>
-        </Card>
       </div>
     </div>
   );
