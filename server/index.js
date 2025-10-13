@@ -6,6 +6,8 @@ const { pool } = require('./db'); // Assuming you've created a db.js as suggeste
 const { createVendorsTable } = require('./models/vendor');
 const { createPurchaseOrdersTable } = require('./models/purchaseOrder');
 const { createBillsTable } = require('./models/bill');
+const { createCustomersTable } = require('./models/customer');
+const { createEstimatesTable } = require('./models/estimate');
 
 const app = express();
 const port = 3000;
@@ -17,11 +19,16 @@ app.use(express.json());
 const vendorsRouter = require('./routes/vendors');
 const purchaseOrdersRouter = require('./routes/purchaseOrders');
 const billsRouter = require('./routes/bills');
+const customersRouter = require('./routes/customers');
+const estimatesRouter = require('./routes/estimates');
 
 // Use new Accounts Payable routes
 app.use('/api/vendors', vendorsRouter);
 app.use('/api/purchase-orders', purchaseOrdersRouter);
 app.use('/api/bills', billsRouter);
+app.use('/api/customers', customersRouter);
+app.use('/api/estimates', estimatesRouter);
+
 
 // A test endpoint
 app.get('/api', (req, res) => {
@@ -247,6 +254,8 @@ const initializeDatabase = async () => {
     await createVendorsTable();
     await createPurchaseOrdersTable();
     await createBillsTable();
+    await createCustomersTable();
+    await createEstimatesTable();
     console.log("Database tables initialized successfully.");
   } catch (error) {
     console.error("Error initializing database tables:", error);

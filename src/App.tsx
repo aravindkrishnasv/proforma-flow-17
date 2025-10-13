@@ -21,6 +21,15 @@ import VendorPortal from "./pages/VendorPortal";
 import VendorOnboarding from "./pages/VendorOnboarding";
 import SubmitInvoice from "./pages/SubmitInvoice";
 import PaymentPage from "./pages/PaymentPage";
+import AccountsPayablePortal from "./pages/AccountsPayablePortal";
+import AccountsReceivablePortal from "./pages/AccountsReceivablePortal";
+import CustomerList from "./pages/CustomerList";
+import CreateCustomer from "./pages/CreateCustomer";
+import EstimateList from "./pages/EstimateList";
+import CreateEstimate from "./pages/CreateEstimate";
+import RecurringInvoiceList from "./pages/RecurringInvoiceList";
+import PaymentsReceivedList from "./pages/PaymentsReceivedList";
+import CreditNoteList from "./pages/CreditNoteList";
 
 const queryClient = new QueryClient();
 
@@ -36,16 +45,33 @@ const App = () => (
             <Routes>
               <Route path="/" element={<Index />} />
               <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/accounts-payable" element={<AccountsPayablePortal />} />
+              <Route path="/accounts-receivable" element={<AccountsReceivablePortal />} />
+
+              {/* Invoice Routes */}
               <Route path="/create-invoice" element={<CreateInvoice />} />
               <Route path="/invoices" element={<InvoiceList />} />
               <Route path="/invoices/:id" element={<InvoiceDetail />} />
               <Route path="/edit-invoice/:id" element={<EditInvoice />} />
+
+              {/* AP Routes */}
               <Route path="/vendors" element={<VendorList />} />
               <Route path="/create-vendor" element={<CreateVendor />} />
               <Route path="/purchase-orders" element={<PurchaseOrderList />} />
               <Route path="/create-purchase-order" element={<CreatePurchaseOrder />} />
               <Route path="/bills" element={<BillList />} />
               <Route path="/create-bill" element={<CreateBill />} />
+
+              {/* AR Routes */}
+              <Route path="/customers" element={<CustomerList />} />
+              <Route path="/create-customer" element={<CreateCustomer />} />
+              <Route path="/estimates" element={<EstimateList />} />
+              <Route path="/create-estimate" element={<CreateEstimate />} />
+              <Route path="/recurring-invoices" element={<RecurringInvoiceList />} />
+              <Route path="/payments-received" element={<PaymentsReceivedList />} />
+              <Route path="/credit-notes" element={<CreditNoteList />} />
+              
+              {/* Other Routes */}
               <Route path="/vendor-portal" element={<VendorPortal />} />
               <Route path="/vendor-onboarding" element={<VendorOnboarding />} />
               <Route path="/submit-invoice" element={<SubmitInvoice />} />

@@ -11,6 +11,15 @@ export interface Vendor {
   updatedAt: string;
 }
 
+export interface Customer {
+  id: number;
+  name: string;
+  address: string;
+  phone: string;
+  email: string;
+  gstin: string;
+}
+
 export interface PurchaseOrderItem {
   id: string;
   name: string;
@@ -49,6 +58,26 @@ export interface Bill {
   status: 'unpaid' | 'paid' | 'overdue';
   is_recurring: boolean;
   recurrence_frequency: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface EstimateItem {
+  id: string;
+  name: string;
+  quantity: number;
+  rate: number;
+}
+
+export interface Estimate {
+  id: number;
+  estimate_number: string;
+  customer_id: number;
+  estimate_date: string;
+  expiry_date: string;
+  items: EstimateItem[];
+  total_amount: number;
+  status: 'draft' | 'sent' | 'accepted' | 'declined';
   createdAt: string;
   updatedAt: string;
 }

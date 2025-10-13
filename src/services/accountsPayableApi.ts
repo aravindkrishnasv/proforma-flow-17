@@ -1,4 +1,4 @@
-import { Vendor, PurchaseOrder, Bill } from '@/types';
+import { Vendor, PurchaseOrder, Bill, Customer, Estimate } from '@/types';
 
 export const accountsPayableApi = {
   // Vendor API calls
@@ -29,6 +29,28 @@ export const accountsPayableApi = {
         body: JSON.stringify({ status }),
     });
     if (!response.ok) throw new Error('Failed to update vendor status');
+    return response.json();
+  },
+
+  // Customer API calls
+  getCustomers: async (): Promise<Customer[]> => {
+    const response = await fetch('/api/customers');
+    if (!response.ok) {
+      throw new Error('Failed to fetch customers');
+    }
+    return response.json();
+  },
+  createCustomer: async (customer: Omit<Customer, 'id'>): Promise<Customer> => {
+    const response = await fetch('/api/customers', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(customer),
+    });
+    if (!response.ok) {
+      throw new Error('Failed to create customer');
+    }
     return response.json();
   },
 
@@ -107,6 +129,35 @@ export const accountsPayableApi = {
         body: JSON.stringify({ bill_ids }),
     });
     if (!response.ok) throw new Error('Failed to process batch payment');
+    return response.json();
+  },
+
+  // Estimate API calls
+  getEstimates: async (): Promise<Estimate[]> => {
+    const response = await fetch('/api/estimates');
+    if (!response.ok) {
+      throw new Error('Failed to fetch estimates');
+    }
+    return response.json();
+  },
+  createEstimate: async (estimate: Omit<Estimate, 'id' | 'createdAt' | 'updatedAt'>): Promise<Estimate> => {
+    const response = await fetch('/api/estimates', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(estimate),
+    });
+    if (!response.ok) {
+      throw new Error('Failed to create estimate');
+    }
+    return response.json();
+  },
+  getEstimateCount: async (): Promise<{ count: number }> => {
+    const response = await fetch('/api/estimates/count');
+    if (!response.ok) {
+      throw new Error('Failed to fetch estimate count');
+    }
     return response.json();
   },
 };

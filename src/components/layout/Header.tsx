@@ -1,6 +1,6 @@
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
-import { FileText, Home, Plus, BarChart3, Users, ShoppingCart, FileSignature } from "lucide-react";
+import { Home, BarChart3, ArrowRightLeft, ArrowLeftRight } from "lucide-react";
 
 const Header = () => {
   const location = useLocation();
@@ -12,29 +12,14 @@ const Header = () => {
       icon: BarChart3,
     },
     {
-      name: "Create Invoice",
-      href: "/create-invoice",
-      icon: Plus,
+      name: "Accounts Payable",
+      href: "/accounts-payable",
+      icon: ArrowLeftRight,
     },
     {
-      name: "Invoice List",
-      href: "/invoices",
-      icon: FileText,
-    },
-    {
-      name: "Vendors",
-      href: "/vendors",
-      icon: Users,
-    },
-    {
-      name: "Purchase Orders",
-      href: "/purchase-orders",
-      icon: ShoppingCart,
-    },
-    {
-      name: "Bills",
-      href: "/bills",
-      icon: FileSignature,
+      name: "Accounts Receivable",
+      href: "/accounts-receivable",
+      icon: ArrowRightLeft,
     },
   ];
 
@@ -56,7 +41,7 @@ const Header = () => {
                   to={item.href}
                   className={cn(
                     "flex items-center space-x-2 text-sm font-medium transition-colors hover:text-primary",
-                    location.pathname === item.href
+                    location.pathname.startsWith(item.href)
                       ? "text-primary"
                       : "text-muted-foreground"
                   )}
